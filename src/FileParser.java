@@ -8,9 +8,9 @@ public class FileParser {
     private String[] notation = new String[]{"B", "KB", "MB", "GB"};
     private short numberSystem = 1024;
 
-
+    //Добавление файлов и поиск установление их размеров:
     public void addFile(String nameFile) {
-        files.add(new TripleFilesProperty(nameFile, new File(nameFile).length(), ""));
+        files.add(new TripleFilesProperty(nameFile, new File(nameFile).length() * (1024 / numberSystem), ""));
 
         if (new File(nameFile).length() == 0) {
             throw new Error("Файла с именем " + nameFile + " не существует.");
@@ -18,32 +18,36 @@ public class FileParser {
     }
 
 
+    //Метод, реализующий суммарный размер всех файлов:
     public void setCatalog() {
         Long temp = 0L;
 
-        for (TripleFilesProperty fileSize: files) {
+        for (TripleFilesProperty fileSize : files) {
             temp += fileSize.second;
         }
 
-        files.clear();
+        files.clear(); //Очищаем все файлы, так как мы их суммировали в отдельный объект, который добавим в след. строке
         files.add(new TripleFilesProperty("Каталог файлов", temp, ""));
     }
 
 
+    //Изменение основания системы счисления с 1024 на 1000:
     public void setNumberSystem() {
         numberSystem = 1000;
     }
 
 
+    //Метод, реализующий человека-читаемый формат размера:
     public void setNotation() {
-        for( int i = 0; files.size() > i; i++) {
-            Object[] tempArr = searchNumber(files.get(i).getSecond());
-            files.set(i, files.get(i)).setSecond((Long)tempArr[0]);
-            files.set(i, files.get(i)).setThird((String) tempArr[1]);
+        for (TripleFilesProperty file : files) {
+            Object[] tempArr = searchNumber(file.getSecond());
+            file.setSecond((Long) tempArr[0]);
+            file.setThird((String) tempArr[1]);
         }
     }
 
 
+    //Поиск нужной единицы измерения:
     private Object[] searchNumber(Long num) {
         Long temp = num;
         byte i = 0;
@@ -57,19 +61,24 @@ public class FileParser {
     }
 
 
-    public void conclusionValues() {
-        for (TripleFilesProperty dataFile: files) {
-            System.out.println(dataFile.first + " = " +
-                               dataFile.second + " " +
-                               dataFile.third);
+    //Вывод результата:
+    public String conclusionValues() {
+        StringBuilder sb = new StringBuilder();
+
+        for (TripleFilesProperty dataFile : files) {
+            sb.append(dataFile.first + " = " +
+                      dataFile.second + " " +
+                      dataFile.third + "\n");
         }
+
+        return sb.toString().trim();
     }
 
 
     class TripleFilesProperty {
-        private String first;
-        private Long second;
-        private String third;
+         String first; //Название файла.
+         Long second; //Размер файла.
+         String third; // Единица измерения(B, KB, MB, GB).
 
 
         TripleFilesProperty(String first, Long second, String third) {

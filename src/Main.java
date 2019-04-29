@@ -19,12 +19,12 @@ public class Main {
             }
         }
 
-        if (performanceMethods[2]) {
-            file.setCatalog();
-        }
-
         if (performanceMethods[1]) {
             file.setNumberSystem();
+        }
+
+        if (performanceMethods[2]) {
+            file.setCatalog();
         }
 
         if (performanceMethods[0]) {
